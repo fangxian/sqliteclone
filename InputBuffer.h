@@ -7,10 +7,6 @@
 
 #ifndef INPUTBUFFER_H_
 #define INPUTBUFFER_H_
-#include <string>
-
-
-using namespace std;
 
 class InputBuffer {
 public:
@@ -22,8 +18,7 @@ public:
 	}
 	virtual ~InputBuffer();
 
-private:
-	string buffer;
+	char* buffer;
 	size_t buffer_length;
 	size_t input_length;
 };

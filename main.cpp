@@ -8,20 +8,29 @@
 #include <iostream>
 #include <string.h>
 #include <stdlib.h>
-#include <string>
 #include "InputBuffer.h"
+
+#define EXIT_ERROR 0
 #define EXIT_SUCCESS 1
 
 using namespace std;
 
 void print_prompt()
 {
-	cout << "db > ";
+    cout << "db > ";
 }
 
 void read_input(InputBuffer* buffer)
 {
-	size_t bytes_read = getline
+    size_t bytes_read = getline(&(buffer->buffer), &(buffer->buffer_length), stdin);
+    if(bytes_read < 0 )
+    {
+        cout << "error in reading input" << endl;
+        exit(EXIT_ERROR);		
+    }
+    buffer->input_length = bytes_read-1;
+    //replace the last char which is newline char
+    buffer->buffer[bytes_read-1] = '\0';
 }
 
 int main(int argc, char const *argv[]) {

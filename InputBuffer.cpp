@@ -7,11 +7,6 @@
 
 #include "InputBuffer.h"
 
-InputBuffer::InputBuffer() {
-	// TODO Auto-generated constructor stub
-
-}
-
 InputBuffer::~InputBuffer() {
 	// TODO Auto-generated destructor stub
 }

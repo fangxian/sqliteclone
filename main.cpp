@@ -9,7 +9,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "InputBuffer.h"
-
+#include <stdio.h>
 #define EXIT_ERROR 0
 #define EXIT_SUCCESS 1
 
@@ -49,5 +49,6 @@ int main(int argc, char const *argv[]) {
         	cout << "unrecognizd command " << input_buffer->buffer << endl;
         }
     }
+    delete input_buffer;
     return 0;
 }

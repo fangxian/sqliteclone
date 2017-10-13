@@ -47,4 +47,6 @@ int main(int argc, char* argv[]) {
       printf("Unrecognized command '%s'.\n", input_buffer->buffer);
     }
   }
+  free(input_buffer);
+  return 0;
 }

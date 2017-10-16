@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define COLUM_USERNAME_SIZE 32
+#define COLUM_EMIAL_SIZE 255
+
 enum MetaCommandResult_t {
   META_COMMAND_SUCCESS,
   META_COMMAND_UNRECOGNIZED_COMMAND
@@ -10,7 +13,8 @@ enum MetaCommandResult_t {
 
 enum PrepareResult_t {
   PREPARE_SUCCESS,
-  PREPARE_UNRECOGNIZED_STATEMENT
+  PREPARE_UNRECOGNIZED_STATEMENT,
+  PREPARE_SYNTAX_ERROR,
 };
 
 struct InputBuffer_t {
@@ -28,9 +32,18 @@ enum StatementType_t
 
 typedef enum StatementType_t StatementType;
 
+struct Insertifno_t
+{
+    int id;
+    char username[COLUM_USERNAME_SIZE];
+    char email[COLUM_EMIAL_SIZE];
+};
+typedef struct Insertifno_t Insertinfo;
+
 struct Statement_t
 {
   StatementType type;
+  Insertinfo row_to_insert;
 };
 
 typedef struct InputBuffer_t InputBuffer;
@@ -77,6 +90,11 @@ PrepareResult prepare_statement(InputBuffer* input_buffer, Statement* statement)
   if(strncmp(input_buffer->buffer, "insert", 6) == 0)
   {
     statement->type = STATEMENT_INSERT;
+    int args_assigned = sscanf(
+        input_buffer->buffer, "insert %d %s %s", &(statement->row_to_insert.id),
+        statement->row_to_insert.username, statement->row_to_insert.email);
+    if(args_assigned < 3)
+        return PREPARE_SYNTAX_ERROR;
     return PREPARE_SUCCESS;
   }
   else if(strncmp(input_buffer->buffer, "select", 6) == 0)

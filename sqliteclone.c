@@ -37,10 +37,8 @@ enum StatementType_t
   STATEMENT_SELECT,
   STATEMENT_UNRECOGNIZED
 };
-
 typedef enum StatementType_t StatementType;
 
-//insert row
 struct Row_t
 {
     int id;
@@ -77,34 +75,57 @@ const uint32_t ROWS_PER_PAGE = PAGE_SIZE / ROW_SIZE;
 const uint32_t TABLE_MAX_ROWS = ROWS_PER_PAGE * TABLE_MAX_PAGES;
 
 
+//table structure
 struct Table_t
 {
+    //declare a pointer point to the pages in the table
     void* pages[TABLE_MAX_PAGES];
     uint32_t num_rows;
 };
 typedef struct Table_t Table;
 
+//print a row' detail infomation in the table
 void print_row(Row* row)
 {
+    if(row == NULL)
+    {
+        printf("this is row is invalid!");
+        return;
+    }
     printf("(%d, %s, %s)\n", row->id, row->username, row->email);
 }
 
-InputBuffer* new_input_buffer() {
-  InputBuffer* input_buffer = malloc(sizeof(InputBuffer));
-  input_buffer->buffer = NULL;
-  input_buffer->buffer_length = 0;
-  input_buffer->input_length = 0;
+//TODO use memory pool to replace malloc
+//create new input buffer
+InputBuffer* new_input_buffer()
+{
+    InputBuffer* input_buffer = malloc(sizeof(InputBuffer));
+    if(input_buffer == NULL)
+    {
+        printf("malloc out of space");
+        exit(1);    
+    }
+    input_buffer->buffer = NULL;
+    input_buffer->buffer_length = 0;
+    input_buffer->input_length = 0;
 
-  return input_buffer;
+    return input_buffer;
 }
 
+//create a new table
 Table* new_table()
 {
     Table* table = malloc(sizeof(Table));
+    if(table == NULL)
+    {
+        printf("malloc out of space");
+        exit(1);
+    }
     table->num_rows = 0;
     return table;
 }
 
+//db shell display
 void print_prompt() { printf("db > "); }
 
 void read_input(InputBuffer* input_buffer) {
@@ -170,6 +191,8 @@ void execute_statement(Statement* statement)
   }
 }
 */
+
+//serialize and deserialize in order to save memory
 void serialize_row(Row* source, void* destination)
 {
     memcpy(destination+ID_OFFSET, &(source->id), ID_SIZE);
@@ -184,6 +207,7 @@ void deserialize_row(void* source, Row* destination)
     memcpy(&(destination->email), source+EMAIL_OFFSET, EMAIL_SIZE);
 }
 
+//TODO add test
 void* row_slot(Table* table, uint32_t row_num)
 {
     uint32_t page_num = row_num / ROWS_PER_PAGE;
